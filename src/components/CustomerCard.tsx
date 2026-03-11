@@ -1,7 +1,10 @@
+'use client';
+
 import { Customer } from '@/data/mock-customers';
 
 export interface CustomerCardProps {
   customer: Customer;
+  onClick?: (customer: Customer) => void;
 }
 
 function getHealthColor(score: number): string {
@@ -22,18 +25,27 @@ function getHealthBgLight(score: number): string {
   return 'bg-green-50';
 }
 
-export default function CustomerCard({ customer }: CustomerCardProps) {
-  const { name, company, healthScore, domains } = customer;
+export default function CustomerCard({ customer, onClick }: CustomerCardProps) {
+  const { name, company, email, healthScore, domains } = customer;
   const hasDomains = domains && domains.length > 0;
   const hasMultipleDomains = domains && domains.length > 1;
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 w-full max-w-sm">
-      {/* Header: name, company, health score */}
+    <div
+      className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 w-full max-w-[400px] min-h-[120px] cursor-pointer hover:shadow-md hover:border-gray-300 transition-all duration-150"
+      onClick={() => onClick?.(customer)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick?.(customer); }}
+    >
+      {/* Header: name, company, email, health score */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="text-base font-semibold text-gray-900 truncate">{name}</h3>
           <p className="text-sm text-gray-500 truncate">{company}</p>
+          {email && (
+            <p className="text-xs text-gray-400 truncate">{email}</p>
+          )}
         </div>
         <div className={`flex flex-col items-center rounded-md px-3 py-1 shrink-0 ${getHealthBgLight(healthScore)}`}>
           <span className={`text-lg font-bold leading-none ${getHealthTextColor(healthScore)}`}>
